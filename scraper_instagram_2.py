@@ -142,7 +142,7 @@ class InstaBot:
             # save updated list to file
             with open("notfollowing.txt", "wb") as y:
                 pickle.dump(unfollow_list_help, y)
-            # do not unfollow to many because instagram can block you
+            # do not unfollow too many because instagram can block you
             if count == 200:
                 break
 

@@ -1,8 +1,8 @@
 from selenium import webdriver
 from time import sleep
 from selenium.common.exceptions import StaleElementReferenceException, NoSuchElementException
-# Login file with username and password
-from login_instagram import username, password
+from dotenv import load_dotenv
+import os
 from selenium.webdriver.support.wait import WebDriverWait
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.by import By
@@ -14,16 +14,18 @@ class InstaBot:
     """Instagram Bot that filters all people from your account that don't follow you back and unfollows them
     """
 
-    def __init__(self, name, pw):
+    def __init__(self):
         """Login and some necessary clicks on the beginning
 
         :param name: your username
         :param pw: your password
         """
-		# TODO: insert your chromedriver path here
-        executable_path = ""
+        load_dotenv()
+        # TODO: insert your chromedriver path here
+        executable_path = "chromedriver.exe"
         self.driver = webdriver.Chrome(executable_path)
-        self.username = name
+        self.username = os.environ.get("LOGINNAME")
+        self.password = os.environ.get("PASSWORD")
         self.driver.get("https://instagram.com")
         # Cookie Window
         WebDriverWait(self.driver, 40).until(EC.element_to_be_clickable(
@@ -31,10 +33,10 @@ class InstaBot:
              'body > div.RnEpo.Yx5HN > div > div > div > div.mt3GC > button.aOOlW.bIiDR'))).click()
         # Paste Username
         WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "#loginForm > div > div:nth-child(1) > div > label > input"))).send_keys(username)
+            (By.CSS_SELECTOR, "#loginForm > div > div:nth-child(1) > div > label > input"))).send_keys(self.username)
         # Paste Password
         WebDriverWait(self.driver, 20).until(EC.presence_of_element_located(
-            (By.CSS_SELECTOR, "#loginForm > div > div:nth-child(2) > div > label > input"))).send_keys(pw)
+            (By.CSS_SELECTOR, "#loginForm > div > div:nth-child(2) > div > label > input"))).send_keys(self.password)
         # Press Login Button
         WebDriverWait(self.driver, 20).until(EC.element_to_be_clickable(
             (By.CSS_SELECTOR,
@@ -154,7 +156,7 @@ class InstaBot:
         """
         # get profile
         self.driver.get("https://instagram.com/" + obj)
-        ignored_exceptions = (StaleElementReferenceException)
+        ignored_exceptions = StaleElementReferenceException
         # press unfollow button
         WebDriverWait(self.driver, 30, ignored_exceptions=ignored_exceptions).until(EC.element_to_be_clickable(
             (By.CLASS_NAME,
@@ -167,6 +169,6 @@ class InstaBot:
 
 
 if __name__ == '__main__':
-    my_bot = InstaBot(username, password)
+    my_bot = InstaBot()
     my_bot.get_unfollowers()
     my_bot.unfollow_all()

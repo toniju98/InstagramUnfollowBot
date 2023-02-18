@@ -17,8 +17,6 @@ class InstaBot:
     def __init__(self):
         """Login and some necessary clicks on the beginning
 
-        :param name: your username
-        :param pw: your password
         """
         load_dotenv()
         # TODO: insert your chromedriver path here
